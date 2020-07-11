@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import com.example.american.databinding.MainFragmentBinding
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
