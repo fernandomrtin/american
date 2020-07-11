@@ -1,4 +1,4 @@
-package com.example.american.main.ui
+package com.example.american.main.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject

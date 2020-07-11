@@ -1,7 +1,7 @@
 package com.example.american.base.di.modules.activity
 
 import com.example.american.base.di.modules.activity.fragment.FragmentModule
-import com.example.american.base.di.modules.viewmodel.ViewModelModule
+import com.example.american.base.di.modules.activity.fragment.viewmodel.ViewModelModule
 import com.example.american.base.di.scopes.ActivityScope
 import com.example.american.main.MainActivity
 import dagger.Module
