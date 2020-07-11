@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.american.base.navigation.NavigationCommand
 import com.example.american.databinding.MainFragmentBinding
 import com.example.american.main.ui.viewmodel.MainViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -50,9 +52,21 @@ class MainFragment : Fragment() {
         navController = findNavController()
 
         viewModel = ViewModelProvider(this, viewModelFactory).get()
+        setOnClickListeners()
+        setObservers()
+    }
+
+    private fun setOnClickListeners() {
         binding.loginButton.setOnClickListener {
-            val action = MainFragmentDirections.actionMainScreenToPrivateZoneScreen()
-            navController.navigate(action)
+            viewModel.onLoginButtonTapped()
         }
+    }
+
+    private fun setObservers() {
+        viewModel.navigationCommand.observe(viewLifecycleOwner, Observer { command ->
+            when (command) {
+                is NavigationCommand.To -> navController.navigate(command.directions)
+            }
+        })
     }
 }
