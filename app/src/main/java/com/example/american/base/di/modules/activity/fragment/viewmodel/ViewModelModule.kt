@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.american.base.di.ViewModelKey
 import com.example.american.base.viewmodel.ViewModelFactory
-import com.example.american.main.ui.MainViewModel
+import com.example.american.main.ui.viewmodel.MainViewModel
+import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -19,4 +20,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     abstract fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PrivateZoneViewModel::class)
+    abstract fun bindPrivateZoneViewModel(viewModel: PrivateZoneViewModel): ViewModel
 }

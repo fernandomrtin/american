@@ -6,7 +6,19 @@
     app:startDestination="@id/mainScreen">
     <fragment
         android:id="@+id/mainScreen"
-        android:name="com.example.american.main.ui.MainFragment"
+        android:name="com.example.american.main.ui.view.MainFragment"
         android:label="@string/login"
-        tools:layout="@layout/main_fragment"/>
+        tools:layout="@layout/main_fragment">
+        <action
+            android:id="@+id/action_mainScreen_to_privateZoneScreen"
+            app:destination="@id/privateZoneScreen" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/privateZoneScreen"
+        android:name="com.example.american.main.ui.view.PrivateZoneFragment"
+        android:label="@string/private_zone"
+        tools:layout="@layout/private_zone_fragment">
+
+    </fragment>
 </navigation>
