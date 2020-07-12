@@ -1,4 +1,4 @@
-package com.example.american.main.ui
+package com.example.american.main.ui.view
 
 import android.content.Context
 import android.os.Bundle
@@ -8,18 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import com.example.american.databinding.MainFragmentBinding
+import com.example.american.databinding.PrivateZoneFragmentBinding
+import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class MainFragment : Fragment() {
+class PrivateZoneFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: PrivateZoneViewModel
 
-    private lateinit var binding: MainFragmentBinding
+    private lateinit var binding: PrivateZoneFragmentBinding
 
     // ///////////////////////////////////////////////////////////////////////////
     // LifeCycle
@@ -35,7 +36,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = MainFragmentBinding.inflate(layoutInflater)
+        binding = PrivateZoneFragmentBinding.inflate(layoutInflater)
         return binding.root
     }
 
