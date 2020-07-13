@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLo
         get() = _sessionToken
 
     fun onLoginButtonTapped() {
-        doLoginUseCase(user = User("",""))
+        doLoginUseCase(user = User("", ""))
     }
 
     @VisibleForTesting
