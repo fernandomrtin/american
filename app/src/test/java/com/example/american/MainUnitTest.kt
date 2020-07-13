@@ -5,8 +5,10 @@ import androidx.lifecycle.Observer
 import arrow.core.Either
 import com.example.american.base.network.model.CommonError
 import com.example.american.main.domain.models.SessionToken
+import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
 import com.example.american.main.model.AmericanClientRepository
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.viewmodel.MainViewModel
@@ -46,8 +48,15 @@ class MainUnitTest {
         coEvery {
             repository.postDoLogin(wrongUser)
         }.returns(Either.Left(CommonError.NotFound))
+        coEvery {
+            repository.storeSessionFields(StorageSessionObject(correctUser.username, SessionToken(tokenCode)))
+        }.returns(true)
+        coEvery {
+            repository.storeSessionFields(StorageSessionObject(wrongUser.username, SessionToken(tokenCode)))
+        }.returns(false)
         val doLoginUseCase = PostDoLoginUseCase(repository)
-        viewModel = MainViewModel(doLoginUseCase)
+        val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)
+        viewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase)
     }
 
     @Test

@@ -5,18 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.american.base.navigation.NavigationCommand
+import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
+import com.example.american.main.domain.models.toDomain
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.models.toModel
 import com.example.american.main.ui.view.MainFragmentDirections
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLoginUseCase) :
-    ViewModel() {
+class MainViewModel @Inject constructor(
+    private val postDoLoginUseCase: PostDoLoginUseCase,
+    private val storeSessionFieldsUseCase: StoreSessionFieldsUseCase
+) : ViewModel() {
     private var _navigationCommand = MutableLiveData<NavigationCommand>()
     val navigationCommand: LiveData<NavigationCommand>
         get() = _navigationCommand
@@ -41,25 +46,36 @@ class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLo
     internal fun doLoginUseCase(ioDispatcher: CoroutineDispatcher = Dispatchers.IO, user: User) =
         postDoLoginUseCase(user, ioDispatcher) { out ->
             out.map {
-                _sessionToken.value = it.toModel()
+                it.toModel()
             }.fold({
                 _errorVisibility.value = true
             }, {
+                _sessionToken.value = it
                 _errorVisibility.value = false
-                _navigationCommand.value =
-                    NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
+                storeFieldsInLocal(user = user, sessionTokenModel = it)
             })
         }
 
     @VisibleForTesting
     internal fun storeFieldsInLocal(
-        ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO, user: User,
         sessionTokenModel: SessionTokenModel
-    ) {
-    }
+    ) =
+        storeSessionFieldsUseCase(
+            StorageSessionObject(
+                user.username,
+                sessionTokenModel.toDomain()
+            )
+        ) { result ->
+            if (result) {
+                _navigationCommand.value =
+                    NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
+            }
+        }
 
     override fun onCleared() {
         super.onCleared()
         postDoLoginUseCase.cancel()
+        storeSessionFieldsUseCase.cancel()
     }
 }
