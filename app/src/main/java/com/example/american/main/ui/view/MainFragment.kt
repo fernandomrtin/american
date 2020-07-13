@@ -73,7 +73,11 @@ class MainFragment : Fragment() {
     private fun setObservers() {
         viewModel.navigationCommand.observe(viewLifecycleOwner, Observer { command ->
             when (command) {
-                is NavigationCommand.To -> navController.navigate(command.directions)
+                is NavigationCommand.To -> {
+                    binding.etUsername.text?.clear()
+                    binding.etPassword.text?.clear()
+                    navController.navigate(command.directions)
+                }
             }
         })
         viewModel.errorVisibility.observe(viewLifecycleOwner, Observer {
