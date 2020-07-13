@@ -15,7 +15,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 
-class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLoginUseCase) : ViewModel() {
+class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLoginUseCase) :
+    ViewModel() {
     private var _navigationCommand = MutableLiveData<NavigationCommand>()
     val navigationCommand: LiveData<NavigationCommand>
         get() = _navigationCommand
@@ -24,8 +25,16 @@ class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLo
     val sessionToken: LiveData<SessionTokenModel>
         get() = _sessionToken
 
-    fun onLoginButtonTapped() {
-        doLoginUseCase(user = User("", ""))
+    private var _errorVisibility = MutableLiveData<Boolean>()
+    val errorVisibility: LiveData<Boolean>
+        get() = _errorVisibility
+
+    fun init() {
+        _navigationCommand.value = null
+    }
+
+    fun onLoginButtonTapped(username: String, password: String) {
+        doLoginUseCase(user = User(username, password))
     }
 
     @VisibleForTesting
@@ -34,10 +43,20 @@ class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLo
             out.map {
                 _sessionToken.value = it.toModel()
             }.fold({
+                _errorVisibility.value = true
             }, {
-                _navigationCommand.value = NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
+                _errorVisibility.value = false
+                _navigationCommand.value =
+                    NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
             })
         }
+
+    @VisibleForTesting
+    internal fun storeFieldsInLocal(
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        sessionTokenModel: SessionTokenModel
+    ) {
+    }
 
     override fun onCleared() {
         super.onCleared()

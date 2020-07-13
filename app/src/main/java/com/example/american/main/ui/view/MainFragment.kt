@@ -5,15 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.american.R
 import com.example.american.base.navigation.NavigationCommand
 import com.example.american.databinding.MainFragmentBinding
 import com.example.american.main.ui.viewmodel.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -52,13 +55,18 @@ class MainFragment : Fragment() {
         navController = findNavController()
 
         viewModel = ViewModelProvider(this, viewModelFactory).get()
-        setOnClickListeners()
+        viewModel.init()
+        setListeners()
         setObservers()
+    }
+
+    private fun setListeners() {
+        setOnClickListeners()
     }
 
     private fun setOnClickListeners() {
         binding.loginButton.setOnClickListener {
-            viewModel.onLoginButtonTapped()
+            viewModel.onLoginButtonTapped(binding.etUsername.text.toString(), binding.etPassword.text.toString())
         }
     }
 
@@ -68,5 +76,16 @@ class MainFragment : Fragment() {
                 is NavigationCommand.To -> navController.navigate(command.directions)
             }
         })
+        viewModel.errorVisibility.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                showErrorView()
+            }
+        })
+    }
+
+    private fun showErrorView() {
+        val errorSnackbar = Snackbar.make(binding.main, getString(R.string.error_message), Snackbar.LENGTH_LONG)
+        errorSnackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.errorColor))
+        errorSnackbar.show()
     }
 }
