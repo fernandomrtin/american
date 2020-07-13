@@ -31,23 +31,30 @@ class AmericanClientStorageImpl @Inject constructor(private val sharedPreference
         val sessionToken =
             SessionTokenEntity(sharedPreferencesUtils.getSharedPreference(sessionTokenKey))
         val timeStampMillis = sharedPreferencesUtils.getLongSharedPreference(timeStampKey)
-        if (timeStampMillis != 0L && userId.isNotEmpty() && sessionToken.tokenCode.isNotEmpty()) {
+        return if (timeStampMillis != 0L && userId.isNotEmpty() && sessionToken.tokenCode.isNotEmpty()) {
             val storedDate = Date(timeStampMillis)
             val diff = Date(System.currentTimeMillis()).time - storedDate.time
             val result = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-            return if (result > 1) {
-                sharedPreferencesUtils.removeFromSharedPreferences(userIdKey)
-                sharedPreferencesUtils.removeFromSharedPreferences(sessionTokenKey)
-                sharedPreferencesUtils.removeFromSharedPreferences(timeStampKey)
+            if (result > 1) {
+                removeAllStoredPreferences()
                 Either.Left(CommonErrorEntity.NotFound("Session Token Not Found").toDomain())
             } else {
                 Either.Right(StorageSessionObjectEntity(userId, sessionToken))
             }
         } else {
-            sharedPreferencesUtils.removeFromSharedPreferences(userIdKey)
-            sharedPreferencesUtils.removeFromSharedPreferences(sessionTokenKey)
-            sharedPreferencesUtils.removeFromSharedPreferences(timeStampKey)
-            return Either.Left(CommonErrorEntity.NotFound("Session Token Not Found").toDomain())
+            removeAllStoredPreferences()
+            Either.Left(CommonErrorEntity.NotFound("Session Token Not Found").toDomain())
         }
+    }
+
+    override suspend fun removeStoredSessionFields(): Boolean {
+        removeAllStoredPreferences()
+        return true
+    }
+
+    private fun removeAllStoredPreferences() {
+        sharedPreferencesUtils.removeFromSharedPreferences(userIdKey)
+        sharedPreferencesUtils.removeFromSharedPreferences(sessionTokenKey)
+        sharedPreferencesUtils.removeFromSharedPreferences(timeStampKey)
     }
 }

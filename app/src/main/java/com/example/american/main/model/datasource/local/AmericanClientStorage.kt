@@ -7,4 +7,5 @@ import com.example.american.main.model.entity.StorageSessionObjectEntity
 interface AmericanClientStorage {
     suspend fun storeSessionFields(storageSessionObject: StorageSessionObjectEntity): Boolean
     suspend fun retrieveStoredSessionFields(): Either<CommonError, StorageSessionObjectEntity>
+    suspend fun removeStoredSessionFields(): Boolean
 }

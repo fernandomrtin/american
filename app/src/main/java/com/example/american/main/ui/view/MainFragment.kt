@@ -56,17 +56,13 @@ class MainFragment : Fragment() {
 
         viewModel = ViewModelProvider(this, viewModelFactory).get()
         viewModel.init()
-        setListeners()
+        setOnClickListeners()
         setObservers()
     }
 
     // ///////////////////////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////////////////////
-
-    private fun setListeners() {
-        setOnClickListeners()
-    }
 
     private fun setOnClickListeners() {
         binding.loginButton.setOnClickListener {

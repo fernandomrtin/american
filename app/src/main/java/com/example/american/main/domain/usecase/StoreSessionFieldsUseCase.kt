@@ -8,5 +8,5 @@ import javax.inject.Inject
 open class StoreSessionFieldsUseCase @Inject constructor(private val repository: AmericanClientRepository) : SuspendedUseCase<StorageSessionObject, Boolean>() {
     override suspend fun run(params: StorageSessionObject): Boolean = repository.storeSessionFields(params)
 
-    override fun onErrorMessage(): String = "Could not retrieve comic details"
+    override fun onErrorMessage(): String = ""
 }

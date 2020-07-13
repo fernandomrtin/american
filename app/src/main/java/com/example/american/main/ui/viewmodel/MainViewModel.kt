@@ -106,5 +106,6 @@ class MainViewModel @Inject constructor(
         super.onCleared()
         postDoLoginUseCase.cancel()
         storeSessionFieldsUseCase.cancel()
+        retrieveStoreSessionFieldsUseCase.cancel()
     }
 }
