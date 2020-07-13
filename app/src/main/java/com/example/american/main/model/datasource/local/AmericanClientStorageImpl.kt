@@ -7,12 +7,7 @@ import com.example.american.base.network.model.toDomain
 import com.example.american.base.utils.SharedPreferencesUtils
 import com.example.american.main.model.entity.SessionTokenEntity
 import com.example.american.main.model.entity.StorageSessionObjectEntity
-import org.joda.time.Days
 import java.sql.Date
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
