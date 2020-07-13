@@ -24,4 +24,8 @@ class AmericanClientRepository @Inject constructor(
 
     suspend fun storeSessionFields(storageSessionObject: StorageSessionObject): Boolean =
         americanClientLocalDataSource.storeSessionFields(storageSessionObject.toEntity())
+
+    suspend fun retrieveStoredSessionFields(): Either<CommonError, StorageSessionObject> = americanClientLocalDataSource.retrieveStoredSessionFields().map {
+        it.toDomain()
+    }
 }
