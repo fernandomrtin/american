@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.american.base.navigation.NavigationCommand
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.models.toModel
 import com.example.american.main.ui.view.MainFragmentDirections
 import javax.inject.Inject
@@ -19,15 +20,19 @@ class MainViewModel @Inject constructor(private val postDoLoginUseCase: PostDoLo
     val navigationCommand: LiveData<NavigationCommand>
         get() = _navigationCommand
 
+    private var _sessionToken = MutableLiveData<SessionTokenModel>()
+    val sessionToken: LiveData<SessionTokenModel>
+        get() = _sessionToken
+
     fun onLoginButtonTapped() {
-        doLoginUseCase()
+        doLoginUseCase(user = User("",""))
     }
 
     @VisibleForTesting
-    internal fun doLoginUseCase(ioDispatcher: CoroutineDispatcher = Dispatchers.IO) =
-        postDoLoginUseCase(User("test", "test"), ioDispatcher) { out ->
+    internal fun doLoginUseCase(ioDispatcher: CoroutineDispatcher = Dispatchers.IO, user: User) =
+        postDoLoginUseCase(user, ioDispatcher) { out ->
             out.map {
-                it.toModel()
+                _sessionToken.value = it.toModel()
             }.fold({
             }, {
                 _navigationCommand.value = NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
