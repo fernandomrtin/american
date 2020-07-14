@@ -8,6 +8,7 @@ import com.example.american.main.domain.models.SessionToken
 import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
 import com.example.american.main.model.AmericanClientRepository
 import com.example.american.main.ui.models.SessionTokenModel
@@ -56,7 +57,8 @@ class MainUnitTest {
         }.returns(false)
         val doLoginUseCase = PostDoLoginUseCase(repository)
         val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)
-        viewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase)
+        val retrieveStoreSessionFieldsUseCase = RetrieveStoreSessionFieldsUseCase(repository)
+        viewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase, retrieveStoreSessionFieldsUseCase)
     }
 
     @Test
