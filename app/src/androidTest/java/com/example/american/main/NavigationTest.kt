@@ -3,6 +3,7 @@ package com.example.american.main
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -30,6 +31,42 @@ class NavigationTest {
 
     @Test
     fun recordedEspressoTest() {
+        val textInputEditText = onView(
+            allOf(
+                withId(R.id.et_username),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.usernameTextField),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textInputEditText.perform(
+            ViewActions.replaceText("fernando"),
+            ViewActions.closeSoftKeyboard()
+        )
+
+        val textInputEditText2 = onView(
+            allOf(
+                withId(R.id.et_password),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.passwordTextField),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textInputEditText2.perform(
+            ViewActions.replaceText("fernando"),
+            ViewActions.closeSoftKeyboard()
+        )
+
         val materialButton = onView(
             allOf(
                 withId(R.id.login_button), withText("Login"),
