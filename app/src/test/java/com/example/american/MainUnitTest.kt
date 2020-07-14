@@ -20,15 +20,17 @@ import com.example.american.main.ui.viewmodel.MainViewModel
 import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
+import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import java.util.UUID
 
 @ExperimentalCoroutinesApi
 class MainUnitTest {
@@ -107,7 +109,7 @@ class MainUnitTest {
                 val directions: NavDirections = navigationCommandValue.directions
                 assertEquals(MainFragmentDirections.actionMainScreenToPrivateZoneScreen(), directions)
             } else {
-                fail("Exception not thrown");
+                fail("Exception not thrown")
             }
         }
     }
