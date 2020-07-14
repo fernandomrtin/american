@@ -10,12 +10,14 @@ import com.example.american.main.domain.models.SessionToken
 import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.RemoveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
 import com.example.american.main.model.AmericanClientRepository
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.view.MainFragmentDirections
 import com.example.american.main.ui.viewmodel.MainViewModel
+import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import java.util.UUID
@@ -23,6 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -39,6 +42,7 @@ class MainUnitTest {
     val coroutinesTestRule = CoroutinesTestRule()
 
     lateinit var mainViewModel: MainViewModel
+    lateinit var privateZoneViewModel: PrivateZoneViewModel
 
     private val correctUser = User("fernando", "fernando")
     private val wrongUser = User("pascual", "pascual")
@@ -61,6 +65,12 @@ class MainUnitTest {
         val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)
         val retrieveStoreSessionFieldsUseCase = RetrieveStoreSessionFieldsUseCase(repository)
         mainViewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase, retrieveStoreSessionFieldsUseCase)
+
+        coEvery {
+            repository.removeStoreSessionFields()
+        }.returns(true)
+        val removeStoreSessionFieldsUseCase = RemoveStoreSessionFieldsUseCase(repository)
+        privateZoneViewModel = PrivateZoneViewModel(removeStoreSessionFieldsUseCase)
     }
 
     @Test
@@ -101,6 +111,19 @@ class MainUnitTest {
             } else {
                 fail("Exception not thrown")
             }
+        }
+    }
+
+    @Test
+    fun `success if removing session token from local orders navigation to login area`() {
+        val observer = mock(Observer::class.java) as Observer<in NavigationCommand>
+        coroutinesTestRule.testDispatcher.runBlockingTest {
+            privateZoneViewModel.navigationCommand.observeForever(observer)
+            runBlocking {
+                privateZoneViewModel.removeFieldsInLocal(coroutinesTestRule.testDispatcher).join()
+            }
+            val navigationCommandValue = privateZoneViewModel.navigationCommand.value
+            assertTrue(navigationCommandValue is NavigationCommand.Back)
         }
     }
 }

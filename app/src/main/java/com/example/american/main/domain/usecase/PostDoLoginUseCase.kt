@@ -11,5 +11,5 @@ import javax.inject.Inject
 open class PostDoLoginUseCase @Inject constructor(private val repository: AmericanClientRepository) : SuspendedUseCase<User, Either<CommonError, SessionToken>>() {
     override suspend fun run(params: User): Either<CommonError, SessionToken> = repository.postDoLogin(params)
 
-    override fun onErrorMessage(): String = "Could not retrieve comic details"
+    override fun onErrorMessage(): String = ""
 }

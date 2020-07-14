@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
+        android:id="@+id/close_session_button"
         android:text="@string/close_session" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

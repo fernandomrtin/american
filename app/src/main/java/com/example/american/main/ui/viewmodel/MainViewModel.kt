@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
             StorageSessionObject(
                 user.username,
                 sessionTokenModel.toDomain()
-            )
+            ), ioDispatcher
         ) { result ->
             if (result) {
                 _navigationCommand.value =
@@ -89,7 +89,7 @@ class MainViewModel @Inject constructor(
     internal fun retrieveFieldsFromLocal(
         ioDispatcher: CoroutineDispatcher = Dispatchers.IO
     ) =
-        retrieveStoreSessionFieldsUseCase("") { out ->
+        retrieveStoreSessionFieldsUseCase("", ioDispatcher) { out ->
             out.map {
             }.fold({
             }, {
@@ -106,5 +106,6 @@ class MainViewModel @Inject constructor(
         super.onCleared()
         postDoLoginUseCase.cancel()
         storeSessionFieldsUseCase.cancel()
+        retrieveStoreSessionFieldsUseCase.cancel()
     }
 }

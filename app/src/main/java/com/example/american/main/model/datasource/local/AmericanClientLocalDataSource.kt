@@ -9,6 +9,9 @@ class AmericanClientLocalDataSource @Inject constructor(private val api: America
     suspend fun storeSessionFields(storageSessionObject: StorageSessionObjectEntity): Boolean =
         api.storeSessionFields(storageSessionObject)
 
+    suspend fun removeStoreSessionFields(): Boolean =
+        api.removeStoredSessionFields()
+
     suspend fun retrieveStoredSessionFields(): Either<CommonError, StorageSessionObjectEntity> =
         api.retrieveStoredSessionFields()
 }
