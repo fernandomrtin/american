@@ -45,7 +45,7 @@ class MainUnitTest {
     lateinit var privateZoneViewModel: PrivateZoneViewModel
 
     private val correctUser = User("fernando", "fernando")
-    private val wrongUser = User("pascual", "pascual")
+    private val wrongUser = User("error", "pascual")
 
     private val tokenCode = UUID.randomUUID().toString().replace("-", "")
 
