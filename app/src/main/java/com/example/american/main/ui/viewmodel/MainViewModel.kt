@@ -36,6 +36,10 @@ class MainViewModel @Inject constructor(
     val progressVisibility: LiveData<Boolean>
         get() = _progressVisibility
 
+    private var _sessionToken = MutableLiveData<SessionTokenModel>()
+    val sessionToken: LiveData<SessionTokenModel>
+        get() = _sessionToken
+
     fun init() {
         _progressVisibility.value = true
         _navigationCommand.value = null
@@ -64,6 +68,7 @@ class MainViewModel @Inject constructor(
                 _progressVisibility.value = false
                 _errorVisibility.value = true
             }, {
+                _sessionToken.value = it
                 _progressVisibility.value = false
                 _errorVisibility.value = false
                 storeFieldsInLocal(user = user, sessionTokenModel = it, timeStamp = timeStamp)
