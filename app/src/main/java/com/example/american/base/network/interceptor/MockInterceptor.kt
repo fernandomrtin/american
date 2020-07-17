@@ -5,20 +5,31 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import java.util.UUID
 
 class MockInterceptor : Interceptor {
+
+    private val tokenCode = UUID.randomUUID().toString().replace("-", "")
+    private var isValidSession = true
+
+    private val getLoginResponse = """{"tokenCode": "$tokenCode"}"""
+    private val getCheckSessionTokenResponse = """{"isValid": "$isValidSession"}"""
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val uri = chain.request().url.toUri().toString()
         var code = 200
         val errorStatusCode = 404
         var responseString = ""
-        if (chain.request().url.username == "error") {
-            code = errorStatusCode
-        }
         when {
+            uri.endsWith("error") -> {
+                code = errorStatusCode
+                responseString = getCheckSessionTokenResponse
+            }
             uri.endsWith("login") -> {
                 responseString = getLoginResponse
+            }
+            uri.endsWith("validatesession") -> {
+                responseString = getCheckSessionTokenResponse
             }
         }
 
@@ -34,9 +45,3 @@ class MockInterceptor : Interceptor {
             .build()
     }
 }
-
-const val getLoginResponse = """
-{
-	"tokenCode": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5"
-}
-"""

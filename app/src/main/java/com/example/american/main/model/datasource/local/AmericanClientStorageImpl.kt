@@ -7,8 +7,6 @@ import com.example.american.base.network.model.toDomain
 import com.example.american.base.utils.SharedPreferencesUtils
 import com.example.american.main.model.entity.SessionTokenEntity
 import com.example.american.main.model.entity.StorageSessionObjectEntity
-import java.sql.Date
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AmericanClientStorageImpl @Inject constructor(private val sharedPreferencesUtils: SharedPreferencesUtils) :
@@ -32,15 +30,7 @@ class AmericanClientStorageImpl @Inject constructor(private val sharedPreference
             SessionTokenEntity(sharedPreferencesUtils.getSharedPreference(sessionTokenKey))
         val timeStampMillis = sharedPreferencesUtils.getLongSharedPreference(timeStampKey)
         return if (timeStampMillis != 0L && userId.isNotEmpty() && sessionToken.tokenCode.isNotEmpty()) {
-            val storedDate = Date(timeStampMillis)
-            val diff = Date(System.currentTimeMillis()).time - storedDate.time
-            val result = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-            if (result > 1) {
-                removeAllStoredPreferences()
-                Either.Left(CommonErrorEntity.NotFound("Session Token Not Found").toDomain())
-            } else {
-                Either.Right(StorageSessionObjectEntity(userId, sessionToken))
-            }
+            Either.Right(StorageSessionObjectEntity(userId, sessionToken, timeStampMillis))
         } else {
             removeAllStoredPreferences()
             Either.Left(CommonErrorEntity.NotFound("Session Token Not Found").toDomain())

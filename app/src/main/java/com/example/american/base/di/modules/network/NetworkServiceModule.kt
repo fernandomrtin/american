@@ -1,6 +1,6 @@
 package com.example.american.base.di.modules.network
 
-import com.example.american.main.model.datasource.remote.service.AmericanClientService2
+import com.example.american.main.model.datasource.remote.service.AmericanClientService
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 object NetworkServiceModule {
     @JvmStatic
     @Provides
-    fun provideRssFeedService(retrofit: Retrofit): AmericanClientService2 {
-        return retrofit.create(AmericanClientService2::class.java)
+    fun provideRssFeedService(retrofit: Retrofit): AmericanClientService {
+        return retrofit.create(AmericanClientService::class.java)
     }
 }

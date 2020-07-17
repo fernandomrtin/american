@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Module
 object NetworkModule {
-    private const val BASE_URL = "https://www.example.com/"
+    private const val BASE_URL = "https://www.google.com/"
 
     @JvmStatic
     @Provides
