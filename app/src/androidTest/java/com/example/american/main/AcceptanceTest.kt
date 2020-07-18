@@ -6,9 +6,7 @@ import android.os.Bundle
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
 import com.karumi.shot.ScreenshotTest
-import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -19,11 +17,6 @@ abstract class AcceptanceTest<T : Activity>(clazz: Class<T>) : ScreenshotTest {
     @Rule
     @JvmField
     val testRule: IntentsTestRule<T> = IntentsTestRule(clazz, true, false)
-
-    @Before
-    fun setup() {
-        val app = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
-    }
 
     fun startActivity(args: Bundle = Bundle()): T {
         val intent = Intent()
