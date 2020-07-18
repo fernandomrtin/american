@@ -81,7 +81,7 @@ class NavigationTest {
             )
         )
         materialButton.perform(click())
-        Thread.sleep(2000);
+        Thread.sleep(2000)
         checkDisplayed(R.id.welcome_text)
     }
 

@@ -8,7 +8,11 @@ import com.example.american.base.navigation.NavigationCommand
 import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.models.toDomain
-import com.example.american.main.domain.usecase.*
+import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.RemoveStoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.ValidateSessionUseCase
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.models.toModel
 import com.example.american.main.ui.view.MainFragmentDirections
@@ -79,7 +83,8 @@ class MainViewModel @Inject constructor(
     internal fun storeFieldsInLocal(
         ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
         user: User,
-        sessionTokenModel: SessionTokenModel, timeStamp: Long
+        sessionTokenModel: SessionTokenModel,
+        timeStamp: Long
     ) =
         storeSessionFieldsUseCase(
             StorageSessionObject(
@@ -109,7 +114,8 @@ class MainViewModel @Inject constructor(
 
     @VisibleForTesting
     internal fun validateSession(
-        ioDispatcher: CoroutineDispatcher = Dispatchers.IO, storageSessionObject: StorageSessionObject
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        storageSessionObject: StorageSessionObject
     ) =
         validateSessionUseCase(storageSessionObject, ioDispatcher) { out ->
             out.map {
