@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">American</string>
+    <string name="login">Login</string>
+    <string name="username">username</string>
+    <string name="password">Password</string>
+    <string name="private_zone">Private Zone</string>
+    <string name="welcome_text">Welcome to private zone</string>
+    <string name="close_session">Close session</string>
+    <string name="error_message">Error validating data. Try again.</string>
+</resources>
