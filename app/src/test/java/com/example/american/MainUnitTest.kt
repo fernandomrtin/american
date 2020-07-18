@@ -9,7 +9,11 @@ import com.example.american.base.network.model.CommonError
 import com.example.american.main.domain.models.SessionToken
 import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
-import com.example.american.main.domain.usecase.*
+import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.RemoveStoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.ValidateSessionUseCase
 import com.example.american.main.model.AmericanClientRepository
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.view.MainFragmentDirections
@@ -69,7 +73,6 @@ class MainUnitTest {
         coEvery {
             repository.removeStoreSessionFields()
         }.returns(true)
-
 
         val doLoginUseCase = PostDoLoginUseCase(repository)
         val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)

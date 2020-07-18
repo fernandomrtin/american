@@ -11,8 +11,8 @@ import com.example.american.base.network.handler.HttpStatus.TIME_OUT_ERROR
 import com.example.american.base.network.model.CommonError
 import com.example.american.base.network.model.CommonErrorEntity
 import com.example.american.base.network.model.toDomain
-import retrofit2.Response
 import java.io.IOException
+import retrofit2.Response
 
 fun <T> Response<T>.runErrorHandler(): Either<CommonErrorEntity, T> =
         try {
