@@ -55,8 +55,10 @@ class MainViewModel @Inject constructor(
     // ///////////////////////////////////////////////////////////////////////////
 
     fun onLoginButtonTapped(username: String, password: String) {
-        _progressVisibility.value = true
-        doLoginUseCase(user = User(username, password))
+        if (username.isNotEmpty() && password.isNotEmpty()) {
+            _progressVisibility.value = true
+            doLoginUseCase(user = User(username, password))
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////////
