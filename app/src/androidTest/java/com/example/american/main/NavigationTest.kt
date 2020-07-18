@@ -73,7 +73,7 @@ class NavigationTest {
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.main),
-                        1
+                        2
                     ),
                     2
                 ),
@@ -81,7 +81,12 @@ class NavigationTest {
             )
         )
         materialButton.perform(click())
-        onView(withId(R.id.welcome_text)).check(matches(isDisplayed()))
+        Thread.sleep(2000)
+        checkDisplayed(R.id.welcome_text)
+    }
+
+    private fun checkDisplayed(viewId: Int) {
+        onView(withId(viewId)).check(matches(isDisplayed()))
     }
 
     private fun childAtPosition(

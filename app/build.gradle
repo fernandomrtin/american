@@ -37,6 +37,11 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
+    ndkVersion "21.3.6528147"
 }
 
 dependencies {
@@ -77,6 +82,12 @@ dependencies {
     implementation "io.arrow-kt:arrow-core:$arrow_version"
     implementation "io.arrow-kt:arrow-syntax:$arrow_version"
     kapt "io.arrow-kt:arrow-meta:$arrow_version"
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation('com.squareup.okhttp3:logging-interceptor:4.8.0')
+    implementation 'org.conscrypt:conscrypt-android:2.4.0'
 
     // Testing
     testImplementation 'junit:junit:4.13'

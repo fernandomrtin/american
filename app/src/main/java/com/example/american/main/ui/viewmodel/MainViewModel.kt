@@ -9,8 +9,10 @@ import com.example.american.main.domain.models.StorageSessionObject
 import com.example.american.main.domain.models.User
 import com.example.american.main.domain.models.toDomain
 import com.example.american.main.domain.usecase.PostDoLoginUseCase
+import com.example.american.main.domain.usecase.RemoveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.ValidateSessionUseCase
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.models.toModel
 import com.example.american.main.ui.view.MainFragmentDirections
@@ -22,21 +24,28 @@ import kotlinx.coroutines.cancel
 class MainViewModel @Inject constructor(
     private val postDoLoginUseCase: PostDoLoginUseCase,
     private val storeSessionFieldsUseCase: StoreSessionFieldsUseCase,
-    private val retrieveStoreSessionFieldsUseCase: RetrieveStoreSessionFieldsUseCase
+    private val retrieveStoreSessionFieldsUseCase: RetrieveStoreSessionFieldsUseCase,
+    private val validateSessionUseCase: ValidateSessionUseCase,
+    private val removeStoreSessionFieldsUseCase: RemoveStoreSessionFieldsUseCase
 ) : ViewModel() {
     private var _navigationCommand = MutableLiveData<NavigationCommand>()
     val navigationCommand: LiveData<NavigationCommand>
         get() = _navigationCommand
 
-    private var _sessionToken = MutableLiveData<SessionTokenModel>()
-    val sessionToken: LiveData<SessionTokenModel>
-        get() = _sessionToken
-
     private var _errorVisibility = MutableLiveData<Boolean>()
     val errorVisibility: LiveData<Boolean>
         get() = _errorVisibility
 
+    private var _progressVisibility = MutableLiveData<Boolean>()
+    val progressVisibility: LiveData<Boolean>
+        get() = _progressVisibility
+
+    private var _sessionToken = MutableLiveData<SessionTokenModel>()
+    val sessionToken: LiveData<SessionTokenModel>
+        get() = _sessionToken
+
     fun init() {
+        _progressVisibility.value = true
         _navigationCommand.value = null
         retrieveFieldsFromLocal()
     }
@@ -46,6 +55,7 @@ class MainViewModel @Inject constructor(
     // ///////////////////////////////////////////////////////////////////////////
 
     fun onLoginButtonTapped(username: String, password: String) {
+        _progressVisibility.value = true
         doLoginUseCase(user = User(username, password))
     }
 
@@ -54,16 +64,18 @@ class MainViewModel @Inject constructor(
     // ///////////////////////////////////////////////////////////////////////////
 
     @VisibleForTesting
-    internal fun doLoginUseCase(ioDispatcher: CoroutineDispatcher = Dispatchers.IO, user: User) =
+    internal fun doLoginUseCase(ioDispatcher: CoroutineDispatcher = Dispatchers.IO, user: User, timeStamp: Long = System.currentTimeMillis()) =
         postDoLoginUseCase(user, ioDispatcher) { out ->
             out.map {
                 it.toModel()
             }.fold({
+                _progressVisibility.value = false
                 _errorVisibility.value = true
             }, {
                 _sessionToken.value = it
+                _progressVisibility.value = false
                 _errorVisibility.value = false
-                storeFieldsInLocal(user = user, sessionTokenModel = it)
+                storeFieldsInLocal(user = user, sessionTokenModel = it, timeStamp = timeStamp)
             })
         }
 
@@ -71,12 +83,13 @@ class MainViewModel @Inject constructor(
     internal fun storeFieldsInLocal(
         ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
         user: User,
-        sessionTokenModel: SessionTokenModel
+        sessionTokenModel: SessionTokenModel,
+        timeStamp: Long
     ) =
         storeSessionFieldsUseCase(
             StorageSessionObject(
                 user.username,
-                sessionTokenModel.toDomain()
+                sessionTokenModel.toDomain(), timeStamp
             ), ioDispatcher
         ) { result ->
             if (result) {
@@ -91,11 +104,44 @@ class MainViewModel @Inject constructor(
     ) =
         retrieveStoreSessionFieldsUseCase("", ioDispatcher) { out ->
             out.map {
+                it
             }.fold({
+                _progressVisibility.value = false
             }, {
-                _navigationCommand.value =
-                    NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
+                validateSession(storageSessionObject = it)
             })
+        }
+
+    @VisibleForTesting
+    internal fun validateSession(
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        storageSessionObject: StorageSessionObject
+    ) =
+        validateSessionUseCase(storageSessionObject, ioDispatcher) { out ->
+            out.map {
+                it
+            }.fold({
+                removeFieldsInLocal()
+                _progressVisibility.value = false
+                _errorVisibility.value = true
+            }, {
+                if (it) {
+                    _progressVisibility.value = false
+                    _navigationCommand.value =
+                        NavigationCommand.To(MainFragmentDirections.actionMainScreenToPrivateZoneScreen())
+                }
+            })
+        }
+
+    @VisibleForTesting
+    internal fun removeFieldsInLocal(
+        ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    ) =
+        removeStoreSessionFieldsUseCase("", ioDispatcher) { result ->
+            if (result) {
+                _navigationCommand.value =
+                    NavigationCommand.Back
+            }
         }
 
     // ///////////////////////////////////////////////////////////////////////////
@@ -107,5 +153,7 @@ class MainViewModel @Inject constructor(
         postDoLoginUseCase.cancel()
         storeSessionFieldsUseCase.cancel()
         retrieveStoreSessionFieldsUseCase.cancel()
+        validateSessionUseCase.cancel()
+        removeStoreSessionFieldsUseCase.cancel()
     }
 }
