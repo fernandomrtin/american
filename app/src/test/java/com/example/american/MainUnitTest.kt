@@ -13,6 +13,7 @@ import com.example.american.main.domain.usecase.PostDoLoginUseCase
 import com.example.american.main.domain.usecase.RemoveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.RetrieveStoreSessionFieldsUseCase
 import com.example.american.main.domain.usecase.StoreSessionFieldsUseCase
+import com.example.american.main.domain.usecase.ValidateSessionUseCase
 import com.example.american.main.model.AmericanClientRepository
 import com.example.american.main.ui.models.SessionTokenModel
 import com.example.american.main.ui.view.MainFragmentDirections
@@ -45,9 +46,11 @@ class MainUnitTest {
     lateinit var privateZoneViewModel: PrivateZoneViewModel
 
     private val correctUser = User("fernando", "fernando")
-    private val wrongUser = User("pascual", "pascual")
+    private val wrongUser = User("error", "pascual")
 
     private val tokenCode = UUID.randomUUID().toString().replace("-", "")
+
+    private val timeStamp = System.currentTimeMillis()
 
     @Before
     fun setUp() {
@@ -59,17 +62,24 @@ class MainUnitTest {
             repository.postDoLogin(wrongUser)
         }.returns(Either.Left(CommonError.NotFound))
         coEvery {
-            repository.storeSessionFields(StorageSessionObject(correctUser.username, SessionToken(tokenCode)))
+            repository.storeSessionFields(StorageSessionObject(correctUser.username, SessionToken(tokenCode), timeStamp))
         }.returns(true)
-        val doLoginUseCase = PostDoLoginUseCase(repository)
-        val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)
-        val retrieveStoreSessionFieldsUseCase = RetrieveStoreSessionFieldsUseCase(repository)
-        mainViewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase, retrieveStoreSessionFieldsUseCase)
-
+        coEvery {
+            repository.postValidateSession(StorageSessionObject(correctUser.username, SessionToken(tokenCode), timeStamp))
+        }.returns(Either.Right(true))
+        coEvery {
+            repository.postValidateSession(StorageSessionObject(wrongUser.username, SessionToken(tokenCode), timeStamp))
+        }.returns(Either.Right(false))
         coEvery {
             repository.removeStoreSessionFields()
         }.returns(true)
+
+        val doLoginUseCase = PostDoLoginUseCase(repository)
+        val storeSessionFieldsUseCase = StoreSessionFieldsUseCase(repository)
+        val retrieveStoreSessionFieldsUseCase = RetrieveStoreSessionFieldsUseCase(repository)
+        val validateSessionUseCase = ValidateSessionUseCase(repository)
         val removeStoreSessionFieldsUseCase = RemoveStoreSessionFieldsUseCase(repository)
+        mainViewModel = MainViewModel(doLoginUseCase, storeSessionFieldsUseCase, retrieveStoreSessionFieldsUseCase, validateSessionUseCase, removeStoreSessionFieldsUseCase)
         privateZoneViewModel = PrivateZoneViewModel(removeStoreSessionFieldsUseCase)
     }
 
@@ -79,7 +89,7 @@ class MainUnitTest {
         coroutinesTestRule.testDispatcher.runBlockingTest {
             mainViewModel.sessionToken.observeForever(observer)
             runBlocking {
-                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, correctUser).join()
+                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, correctUser, timeStamp).join()
             }
             assertEquals(tokenCode, mainViewModel.sessionToken.value?.tokenCode)
         }
@@ -91,7 +101,7 @@ class MainUnitTest {
         coroutinesTestRule.testDispatcher.runBlockingTest {
             mainViewModel.sessionToken.observeForever(observer)
             runBlocking {
-                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, wrongUser).join()
+                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, wrongUser, timeStamp).join()
             }
             assertEquals(true, mainViewModel.errorVisibility.value)
         }
@@ -102,7 +112,7 @@ class MainUnitTest {
         coroutinesTestRule.testDispatcher.runBlockingTest {
             mainViewModel.navigationCommand.observeForever(observer)
             runBlocking {
-                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, correctUser).join()
+                mainViewModel.doLoginUseCase(coroutinesTestRule.testDispatcher, correctUser, timeStamp).join()
             }
             val navigationCommandValue = mainViewModel.navigationCommand.value
             if (navigationCommandValue is NavigationCommand.To) {

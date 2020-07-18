@@ -22,6 +22,14 @@ class AmericanClientRepository @Inject constructor(
             it.toDomain()
         }
 
+    suspend fun postValidateSession(storageSessionObject: StorageSessionObject): Either<CommonError, Boolean> =
+        americanClientDataSource.postValidateSession(
+            storageSessionObject.userId, storageSessionObject.sessionToken.tokenCode,
+            storageSessionObject.timeStamp
+        ).map {
+            it.isValid
+        }
+
     suspend fun storeSessionFields(storageSessionObject: StorageSessionObject): Boolean =
         americanClientLocalDataSource.storeSessionFields(storageSessionObject.toEntity())
 

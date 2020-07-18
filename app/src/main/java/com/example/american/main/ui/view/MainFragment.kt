@@ -85,6 +85,13 @@ class MainFragment : Fragment() {
                 showErrorView()
             }
         })
+        viewModel.progressVisibility.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                binding.progressCircular.visibility = View.VISIBLE
+            } else {
+                binding.progressCircular.visibility = View.GONE
+            }
+        })
     }
 
     private fun showErrorView() {
