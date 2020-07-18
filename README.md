@@ -13,7 +13,8 @@ In this repository you will find my solution to the american client app.
   - Instrumentation tests and unit tests.
   - Error control.
   - Continuos integration with GitHub Actions.
-  - Check code style with Ktlint
+  - Check code style with Ktlint.
+  - Use Shot to test the app through screenshots.
 
 ### Libraries
 
@@ -27,6 +28,7 @@ In the development of this app we have used the following libraries:
 * [ViewBinding](https://developer.android.com/topic/libraries/view-binding) - View loading.
 * [Arrow](https://arrow-kt.io/) - Functional Either.
 * [Ktlint](https://arrow-kt.io/) - Check code style.
+* [Shot](https://github.com/Karumi/Shot) - Test the app through screenshots.
 
 ### How the app works
 
