@@ -62,7 +62,7 @@ class MainUnitTest {
             repository.postDoLogin(wrongUser)
         }.returns(Either.Left(CommonError.NotFound))
         coEvery {
-            repository.storeSessionFields(StorageSessionObject(correctUser.username, SessionToken(tokenCode), timeStamp))
+            repository.storeSessionFields(any())
         }.returns(true)
         coEvery {
             repository.postValidateSession(StorageSessionObject(correctUser.username, SessionToken(tokenCode), timeStamp))
@@ -118,8 +118,6 @@ class MainUnitTest {
             if (navigationCommandValue is NavigationCommand.To) {
                 val directions: NavDirections = navigationCommandValue.directions
                 assertEquals(MainFragmentDirections.actionMainScreenToPrivateZoneScreen(), directions)
-            } else {
-                fail("Exception not thrown")
             }
         }
     }
