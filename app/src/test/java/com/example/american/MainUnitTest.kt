@@ -47,7 +47,7 @@ class MainUnitTest {
     private val correctUser = User("fernando", "fernando")
     private val wrongUser = User("error", "pascual")
 
-    private val tokenCode = UUID.randomUUID().toString().replace("-", "")
+    private val tokenCode = "0394j02b982buewf98abfs8d"
 
     private val timeStamp = System.currentTimeMillis()
 
