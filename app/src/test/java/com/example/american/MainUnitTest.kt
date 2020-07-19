@@ -21,7 +21,6 @@ import com.example.american.main.ui.viewmodel.MainViewModel
 import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
