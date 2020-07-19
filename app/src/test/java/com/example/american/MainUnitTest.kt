@@ -21,7 +21,6 @@ import com.example.american.main.ui.viewmodel.MainViewModel
 import com.example.american.main.ui.viewmodel.PrivateZoneViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
@@ -47,7 +46,7 @@ class MainUnitTest {
     private val correctUser = User("fernando", "fernando")
     private val wrongUser = User("error", "pascual")
 
-    private val tokenCode = UUID.randomUUID().toString().replace("-", "")
+    private val tokenCode = "0394j02b982buewf98abfs8d"
 
     private val timeStamp = System.currentTimeMillis()
 
